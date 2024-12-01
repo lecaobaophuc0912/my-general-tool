@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Voice ChatGPT",
+  "description": "Voice ChatGPT is a browser extension that allows you to generate voice from text using OpenAI's ChatGPT.",
+  "version": "1.0",
+  "options_ui": {
+    "page": "options.html"
+  },
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "js/vendor.js",
+        "js/content_script.js"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "windows"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "http://*/",
+    "https://*/"
+  ]
+}

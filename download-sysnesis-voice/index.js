@@ -1,4 +1,4 @@
-// juniper, sky, cove, ember, breeze, maple
+// juniper, sky, cove, ember, breeze, maple, shimmer
 let voice = "cove";
 let message_id = "682554ee-0dc6-xxxx-9daa-xxxxxxxxx";
 let conversation_id = "xxxxxxx-8444-8003-adb0-xxxxxxxx";
