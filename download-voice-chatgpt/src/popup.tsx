@@ -169,9 +169,11 @@ const Popup = () => {
 
     chrome.storage.local.get([SELECTED_VOICE_KEY], (result) => {
       setSelectVoice(result[SELECTED_VOICE_KEY] || 'breeze');
+      chrome.storage.local.set({ [SELECTED_VOICE_KEY]: result[SELECTED_VOICE_KEY] || 'breeze' });
     });
     chrome.storage.local.get([ACCESS_TOKEN_KEY], (result) => {
       setCurrentToken(result[ACCESS_TOKEN_KEY] || '');
+      chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: result[ACCESS_TOKEN_KEY] || '' });
     });
   }, []);
 

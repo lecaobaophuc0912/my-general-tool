@@ -78,6 +78,7 @@ function handleDownloadVoice(data: { tabId: string, resetBadgeAndTitle: () => vo
     return new Promise((resolve, reject) => {
       if (!token || !conversationId || !messageId) {
         alert('Please enter access token, conversation id and message id');
+        reject();
         return;
       }
       token =
