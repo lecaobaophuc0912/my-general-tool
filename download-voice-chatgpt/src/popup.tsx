@@ -25,11 +25,6 @@ import "./popup.css";
 
 const listVoices = [
   {
-    name: "Arbor",
-    value: "arbor",
-    available: false,
-  },
-  {
     name: "Breeze",
     value: "breeze",
     available: true,
@@ -55,24 +50,29 @@ const listVoices = [
     available: true,
   },
   {
-    name: "Sol",
-    value: "sol",
-    available: false,
+    name: "Shimmer",
+    value: "shimmer",
+    available: true,
   },
   {
-    name: "Spruce",
+    name: "Sol (No sure)",
+    value: "sol",
+    available: true,
+  },
+  {
+    name: "Spruce (No sure)",
     value: "spruce",
     available: false,
   },
   {
-    name: "Vale",
+    name: "Vale (No sure)",
     value: "vale",
     available: false,
   },
   {
-    name: "Shimmer",
-    value: "shimmer",
-    available: true,
+    name: "Arbor (No sure)",
+    value: "arbor",
+    available: false,
   },
 ]
 
