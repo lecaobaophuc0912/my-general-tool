@@ -62,17 +62,17 @@ const listVoices = [
   {
     name: "Spruce (No sure)",
     value: "spruce",
-    available: false,
+    available: true,
   },
   {
     name: "Vale (No sure)",
     value: "vale",
-    available: false,
+    available: true,
   },
   {
     name: "Arbor (No sure)",
     value: "arbor",
-    available: false,
+    available: true,
   },
 ]
 
