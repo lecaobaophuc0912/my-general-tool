@@ -91,8 +91,22 @@ function handleDownloadVoice(data: { tabId: string, resetBadgeAndTitle: () => vo
       headers.append("Authorization", token);
 
       fetch(file, { headers })
-        .then((response) => response.blob())
+        .then((response) => {
+          if (response.status === 401) {
+            reject(new Error('Update new access token'));
+            return;
+          }
+          if (response.status !== 200) {
+            reject(new Error('Have unknow error occurred'));
+            return;
+          }
+          return response.blob()
+        })
         .then((blobby) => {
+          if (!blobby) {
+            reject()
+            return;
+          };
           let objectUrl = window.URL.createObjectURL(blobby);
 
           anchor.href = objectUrl;
@@ -118,11 +132,10 @@ function handleDownloadVoice(data: { tabId: string, resetBadgeAndTitle: () => vo
   }
   const conversationId = getV4Id(window.location.href);
   chrome.storage.local.get(['accessToken', 'selectedVoice'], (result) => {
-    downloadFile(result['accessToken'], conversationId || '', elementMessageId || '', result['selectedVoice'], window.document).then(() => {
-      console.log('success');
+    downloadFile(result['accessToken'], conversationId || '', elementMessageId || '', result['selectedVoice'], window.document).then((re) => {
       chrome.runtime.sendMessage({ action: "stopLoading" });
     }).catch((err: any) => {
-      console.error('error', err);
+      alert(err?.message || 'Have unknow error occurred');
       chrome.runtime.sendMessage({ action: "stopLoading" });
     });
   });
