@@ -25,53 +25,103 @@ import "./popup.css";
 
 const listVoices = [
   {
-    name: "Breeze",
+    name: "Breeze (Nữ)",
     value: "breeze",
     available: true,
   },
   {
-    name: "Cove",
+    name: "Cove (Nam)",
     value: "cove",
     available: true,
   },
   {
-    name: "Ember",
+    name: "Ember (Nam)",
     value: "ember",
     available: true,
   },
   {
-    name: "Juniper",
+    name: "Juniper (Nữ)",
     value: "juniper",
     available: true,
   },
   {
-    name: "Maple",
+    name: "Maple (Nữ)",
     value: "maple",
     available: true,
   },
   {
-    name: "Shimmer",
+    name: "Shimmer (Nữ)",
     value: "shimmer",
     available: true,
   },
   {
-    name: "Sol (No sure)",
+    name: "Sol (Not Work)",
     value: "sol",
     available: true,
   },
   {
-    name: "Spruce (No sure)",
+    name: "Spruce (Not Work)",
     value: "spruce",
     available: true,
   },
   {
-    name: "Vale (No sure)",
+    name: "Vale (Nữ)",
     value: "vale",
     available: true,
   },
   {
-    name: "Arbor (No sure)",
+    name: "Orbit (Nam)",
+    value: "orbit",
+    available: true,
+  },
+  {
+    name: "Arbor (Not Work)",
     value: "arbor",
+    available: true,
+  },
+  {
+    name: "Fable (Not Work)",
+    value: "fable",
+    available: true,
+  },
+  {
+    name: "Nova (Not Work)",
+    value: "nova",
+    available: true,
+  },
+  {
+    name: "Echo (Not Work)",
+    value: "echo",
+    available: true,
+  },
+  {
+    name: "Ridge (Nam)",
+    value: "ridge",
+    available: true,
+  },
+  {
+    name: "Reef (Nam)",
+    value: "reef",
+    available: true,
+  },
+  {
+    name: "Rainbow (Not Work)",
+    value: "rainbow",
+    available: true,
+  },
+  {
+    name: "Harp (Nữ)",
+    value: "harp",
+    available: true,
+  },
+  {
+    name: "Glimmer (Nữ)",
+    value: "glimmer",
+    available: true,
+  },
+  {
+    name: "Fathom (Nam)",
+    value: "fathom",
     available: true,
   },
 ]
@@ -283,7 +333,7 @@ const Popup = () => {
                   <input type="text" style={{
                     width: "70%",
                   }} className="mr-2 flex-1" placeholder="Enter message id" onChange={(evt) => {
-                    handleSelectVoice(evt as any);
+                    setCurrentMessageId(evt.target.value);
                   }} />
                   <button onClick={() => {
                     setCurrentMessageId('');
