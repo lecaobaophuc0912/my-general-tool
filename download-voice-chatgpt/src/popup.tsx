@@ -124,21 +124,26 @@ const listVoices = [
     value: "fathom",
     available: true,
   },
-]
+];
 
-const SELECTED_VOICE_KEY = 'selectedVoice';
-const ACCESS_TOKEN_KEY = 'accessToken';
+const SELECTED_VOICE_KEY = "selectedVoice";
+const ACCESS_TOKEN_KEY = "accessToken";
 
-const downloadFile = (token: string, conversationId: string, messageId: string, voice: string, documentInject?: any) => {
+const downloadFile = (
+  token: string,
+  conversationId: string,
+  messageId: string,
+  voice: string,
+  documentInject?: any
+) => {
   let document = documentInject || window.document;
 
   return new Promise((resolve, reject) => {
     if (!token || !conversationId || !messageId) {
-      alert('Please enter access token, conversation id and message id');
+      alert("Please enter access token, conversation id and message id");
       return;
     }
-    token =
-      `Bearer ${token}`;
+    token = `Bearer ${token}`;
     let anchor = document.createElement("a");
     document.body.appendChild(anchor);
     let file = `https://chatgpt.com/backend-api/synthesize?message_id=${messageId}&conversation_id=${conversationId}&voice=${voice}&format=aac`;
@@ -157,11 +162,12 @@ const downloadFile = (token: string, conversationId: string, messageId: string, 
 
         window.URL.revokeObjectURL(objectUrl);
         resolve(true);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         reject(err);
       });
   });
-}
+};
 
 const Popup = () => {
   const [count, setCount] = useState(0);
@@ -170,40 +176,50 @@ const Popup = () => {
   const [currentMessageId, setCurrentMessageId] = useState<string>();
   const [selectVoice, setSelectVoice] = useState<string>("");
   const [isShowAddToken, setIsShowAddToken] = useState<boolean>(false);
-  const [currentToken, setCurrentToken] = useState<string>('');
+  const [currentToken, setCurrentToken] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.action) {
-        case 'setMessageId':
-          chrome.storage.local.get([SELECTED_VOICE_KEY, ACCESS_TOKEN_KEY], (result) => {
-            setCurrentMessageId(message.id);
-            setCurrentConversationId(message.conversationId);
-            setSelectVoice(result[SELECTED_VOICE_KEY] || 'breeze');
-            setCurrentToken(result[ACCESS_TOKEN_KEY] || '');
-          });
+        case "setMessageId":
+          chrome.storage.local.get(
+            [SELECTED_VOICE_KEY, ACCESS_TOKEN_KEY],
+            (result) => {
+              setCurrentMessageId(message.id);
+              setCurrentConversationId(message.conversationId);
+              setSelectVoice(result[SELECTED_VOICE_KEY] || "breeze");
+              setCurrentToken(result[ACCESS_TOKEN_KEY] || "");
+            }
+          );
 
           break;
-        case 'onDownloadVoiceAction':
-          chrome.storage.local.get([SELECTED_VOICE_KEY, ACCESS_TOKEN_KEY], (result) => {
-            setIsLoading(true);
-            setSelectVoice(result[SELECTED_VOICE_KEY] || 'breeze');
-            setCurrentToken(result[ACCESS_TOKEN_KEY] || '');
-            setCurrentConversationId(message?.conversationId);
-            downloadFile(result[ACCESS_TOKEN_KEY], message.conversationId || '', message.id || '', result[SELECTED_VOICE_KEY]).then(() => {
-              setIsLoading(false);
-            }).catch((err) => {
-              setIsLoading(false);
-            });
-          });
+        case "onDownloadVoiceAction":
+          chrome.storage.local.get(
+            [SELECTED_VOICE_KEY, ACCESS_TOKEN_KEY],
+            (result) => {
+              setIsLoading(true);
+              setSelectVoice(result[SELECTED_VOICE_KEY] || "breeze");
+              setCurrentToken(result[ACCESS_TOKEN_KEY] || "");
+              setCurrentConversationId(message?.conversationId);
+              downloadFile(
+                result[ACCESS_TOKEN_KEY],
+                message.conversationId || "",
+                message.id || "",
+                result[SELECTED_VOICE_KEY]
+              )
+                .then(() => {
+                  setIsLoading(false);
+                })
+                .catch((err) => {
+                  setIsLoading(false);
+                });
+            }
+          );
         default:
           break;
       }
     });
-
   }, [count]);
   const getV4Id = (url: string): string | undefined => {
     const match = url.match(/\/c\/([\w-]+)$/);
@@ -211,22 +227,24 @@ const Popup = () => {
   };
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-
       const url = tabs[0]?.url;
       const conversationId = url ? getV4Id(url) : undefined;
       setCurrentConversationId(conversationId);
     });
 
     chrome.storage.local.get([SELECTED_VOICE_KEY], (result) => {
-      setSelectVoice(result[SELECTED_VOICE_KEY] || 'breeze');
-      chrome.storage.local.set({ [SELECTED_VOICE_KEY]: result[SELECTED_VOICE_KEY] || 'breeze' });
+      setSelectVoice(result[SELECTED_VOICE_KEY] || "breeze");
+      chrome.storage.local.set({
+        [SELECTED_VOICE_KEY]: result[SELECTED_VOICE_KEY] || "breeze",
+      });
     });
     chrome.storage.local.get([ACCESS_TOKEN_KEY], (result) => {
-      setCurrentToken(result[ACCESS_TOKEN_KEY] || '');
-      chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: result[ACCESS_TOKEN_KEY] || '' });
+      setCurrentToken(result[ACCESS_TOKEN_KEY] || "");
+      chrome.storage.local.set({
+        [ACCESS_TOKEN_KEY]: result[ACCESS_TOKEN_KEY] || "",
+      });
     });
   }, []);
-
 
   const handleSelectVoice = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectVoice(event.target.value);
@@ -238,144 +256,178 @@ const Popup = () => {
     chrome.storage.local.set({ [ACCESS_TOKEN_KEY]: event.target.value });
   };
 
-
-
   const handleClickDownload = useCallback(async () => {
+    if (!currentToken || !currentConversationId || !currentMessageId) {
+      alert("Please enter access token, conversation id and message id");
+      return;
+    }
     setIsLoading(true);
     try {
-      await downloadFile(currentToken, currentConversationId || '', currentMessageId || '', selectVoice);
-    } catch (error) {
-    }
+      await downloadFile(
+        currentToken,
+        currentConversationId || "",
+        currentMessageId || "",
+        selectVoice
+      );
+    } catch (error) {}
     setIsLoading(false);
-
-
-  }, [isShowAddToken, currentToken, currentConversationId, currentMessageId, selectVoice]);
+  }, [
+    isShowAddToken,
+    currentToken,
+    currentConversationId,
+    currentMessageId,
+    selectVoice,
+  ]);
 
   return (
     <>
-      <div className="px-2 d-flex flex-column justify-content-between align-items-center" style={{
-        width: "100vw",
-        height: "100vh",
-      }}>
-        {isLoading ? <div
-          className="loading-overlay"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)", // semi-transparent background
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div className="spinner" style={{ textAlign: "center" }}>
-            {/* Spinner Animation */}
-            <div
-              style={{
-                width: "50px",
-                height: "50px",
-                border: "6px solid #f3f3f3",
-                borderTop: "6px solid #007bff",
-                borderRadius: "50%",
-                animation: "spin 1s linear infinite",
-              }}
-            ></div>
-            <p style={{ color: "#fff", marginTop: "10px", fontSize: "16px" }}>
-              Loading...
-            </p>
-          </div>
-        </div> : null}
-
-        {isShowAddToken ?
-          <div className="w-full">
-            <h3 className="w-full" style={{
-              textAlign: 'center'
-            }}>Add Token</h3>
-
-
-            <div className="px-2 mt-2 w-full">
-              <span className="mr-1 fs-6  bold">Access Token:</span>
-              <div className="d-flex" style={{
-                width: "90%",
-              }}>
-                <textarea rows={10} className="mr-2 flex-1 w-full" placeholder="Enter access token" value={currentToken} onChange={(evt) => {
-                  handleChangeToken(evt as any);
-                }}></textarea>
-              </div>
-
-            </div>
-          </div>
-          : <div className="w-full">
-            <h3 className="w-full" style={{
-              textAlign: 'center'
-            }}>Download Voice</h3>
-
-            <div className="px-2">
-              <div className="mr-1 fs-6 bold">Current conversation:</div>
-              <div className="italic fs-7" style={{
-                color: "blue",
-              }}>{currentConversationId}</div>
-
-            </div>
-
-            <div className="px-2 mt-2 w-full">
-              <div className="mr-1 fs-6  bold">Current Message:</div>
-              {currentMessageId ? <div>
-                <div className="italic fs-7 w-80" style={{
-                  color: "violet",
-                }}>{currentMessageId}</div>
-              </div>
-                : <div className="d-flex w-full">
-                  <input type="text" style={{
-                    width: "70%",
-                  }} className="mr-2 flex-1" placeholder="Enter message id" onChange={(evt) => {
-                    setCurrentMessageId(evt.target.value);
-                  }} />
-                  <button onClick={() => {
-                    setCurrentMessageId('');
-                  }}>Clear</button>
-                </div>}
-
-            </div>
-
-            <div className="px-2 w-full mt-4">
-              <span className="fs-6 bold">Choose a voice:</span>
-              <select className="w-75" value={selectVoice} onChange={handleSelectVoice}>
-                {listVoices
-                  .filter((voice) => voice.available)
-                  .map((voice) => (
-                    <option key={voice.value} value={voice.value}>
-                      {voice.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>}
-
-        <div className="tw-flex justify-content-between align-items-center">
-          {!isShowAddToken ? <button
-            className="my-4 mx-2"
-            onClick={() => handleClickDownload()}
-            style={{ marginRight: "5px" }}
-          >
-            Download
-          </button> : false}
-          <button
-            className="my-4 mx-2"
-            onClick={() => {
-              setIsShowAddToken(!isShowAddToken);
+      <div className="popup-container">
+        {isLoading ? (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(255,255,255,0.7)",
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 12,
             }}
-            style={{ marginRight: "5px" }}
           >
-            {isShowAddToken ? 'Hide add token' : 'Show add token'}
+            <div className="popup-spinner" />
+            <p style={{ marginTop: 12 }}>Đang tải...</p>
+          </div>
+        ) : null}
+        <h2>Tải xuống giọng nói</h2>
+        {isShowAddToken ? (
+          <div>
+            <label className="popup-label" htmlFor="access-token">
+              Access Token:
+            </label>
+            <textarea
+              id="access-token"
+              rows={4}
+              className="popup-input"
+              placeholder="Nhập access token"
+              value={currentToken}
+              onChange={(evt) => handleChangeToken(evt as any)}
+            ></textarea>
+          </div>
+        ) : (
+          <>
+            <label className="popup-label">Cuộc hội thoại hiện tại:</label>
+            <div style={{ marginBottom: 12, color: "#555", fontSize: 14 }}>
+              {currentConversationId || "Không có"}
+            </div>
+            <label className="popup-label" htmlFor="messageId">
+              Message hiện tại:
+            </label>
+            <div className="popup-btn-row" style={{ marginBottom: 0 }}>
+              <input
+                type="text"
+                className="popup-input"
+                id="messageId"
+                placeholder="Nhập message id"
+                value={currentMessageId || ""}
+                onChange={(evt) => setCurrentMessageId(evt.target.value)}
+                style={{ marginBottom: 0 }}
+              />
+              <button
+                className="popup-btn"
+                style={{ width: 90, background: "#e53935" }}
+                onClick={() => setCurrentMessageId("")}
+                type="button"
+              >
+                Xóa
+              </button>
+            </div>
+            <label className="popup-label" htmlFor="voice">
+              Chọn giọng đọc:
+            </label>
+            <select
+              className="popup-select"
+              id="voice"
+              value={selectVoice}
+              onChange={handleSelectVoice}
+            >
+              {listVoices
+                .filter((voice) => voice.available)
+                .map((voice) => (
+                  <option key={voice.value} value={voice.value}>
+                    {voice.name}
+                  </option>
+                ))}
+            </select>
+          </>
+        )}
+        <div className="popup-btn-row">
+          {!isShowAddToken ? (
+            <button
+              className="popup-btn"
+              onClick={() => handleClickDownload()}
+              type="button"
+            >
+              Tải xuống
+            </button>
+          ) : null}
+          <button
+            className="popup-btn"
+            style={{ background: isShowAddToken ? "#757575" : "#43a047" }}
+            onClick={() => setIsShowAddToken(!isShowAddToken)}
+            type="button"
+          >
+            {isShowAddToken ? "Ẩn thêm token" : "Hiện thêm token"}
           </button>
+          {isShowAddToken && (
+            <button
+              className="popup-btn"
+              style={{ background: "#1976d2" }}
+              onClick={async () => {
+                // Gửi message sang content script để lấy token
+                setIsLoading(true);
+                chrome.tabs.query(
+                  { active: true, currentWindow: true },
+                  (tabs) => {
+                    if (tabs[0]?.id) {
+                      console.log("tabs[0].id", tabs[0].id);
+                      chrome.tabs.sendMessage(
+                        tabs[0].id,
+                        { action: "extractAccessToken" },
+                        (response) => {
+                          setIsLoading(false);
+                          if (response && response.accessToken) {
+                            setCurrentToken(response.accessToken);
+                            // Fill vào textarea nếu có
+                            const textarea = document.getElementById(
+                              "access-token"
+                            ) as HTMLTextAreaElement;
+                            if (textarea) textarea.value = response.accessToken;
+                            chrome.storage.local.set({
+                              [ACCESS_TOKEN_KEY]: response.accessToken,
+                            });
+                          } else {
+                            alert("Không tìm thấy accessToken trên trang!");
+                          }
+                        }
+                      );
+                    } else {
+                      setIsLoading(false);
+                    }
+                  }
+                );
+              }}
+              type="button"
+            >
+              Tự động lấy token
+            </button>
+          )}
         </div>
-      </div >
-
+      </div>
     </>
   );
 };
