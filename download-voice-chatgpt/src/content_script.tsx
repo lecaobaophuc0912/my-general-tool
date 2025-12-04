@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         (script) =>
           script.textContent &&
           script.textContent.includes(
-            "window.__reactRouterContext.streamController.enqueue"
+            "accessToken"
           )
       );
       for (const script of scripts) {
